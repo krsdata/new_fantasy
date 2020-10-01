@@ -358,7 +358,7 @@ class ApiController extends Controller
             $matches = Matches::where('status',3)
             ->get();
         }
-        if($matches){
+        if($matches->count()){
             $this->getPlayerPoints($request);
         }
         $matches->transform(function($item,$key)use($request){

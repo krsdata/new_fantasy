@@ -9,11 +9,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.3",
+        "anandsiddharth/laravel-paytm-wallet": "^1.0",
+        "barryvdh/laravel-dompdf": "^0.8.7",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.1",
         "laravel/framework": "^8.0",
-        "laravel/tinker": "^2.0"
+        "laravel/passport": "^10.0",
+        "laravel/tinker": "^2.0",
+        "phpmailer/phpmailer": "^6.1",
+        "razorpay/razorpay": "^2.5"
     },
     "require-dev": {
         "facade/ignition": "^2.3.6",

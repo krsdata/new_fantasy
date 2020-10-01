@@ -366,7 +366,7 @@ class ApiController extends Controller
                     ->where('filled_spot','>',0)
                     ->get();
                     // get contest based on contest
-                    $contests->transform(function($item,$key){
+                    $contests->transform(function($item,$key)use($request){
                         $request->merge(['match_id'=>$item->match_id]); 
                         $this->updateMatchRankByMatchId($item->match_id,$item->id); 
                         $this->WinningPrizeDistribution($request);

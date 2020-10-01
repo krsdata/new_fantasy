@@ -370,10 +370,10 @@ class ApiController extends Controller
                        
                     $this->updateMatchRankByMatchId($item->match_id,$item->id); 
                     $request->merge(['match_id'=>$item->match_id]);
-                    $this->WinningPrizeDistribution($request);
+                    
                 });
             });
-
+        $this->WinningPrizeDistribution($request);
       //  $this->WinningPrizeDistribution($request);
         return [
             'status'=>true,

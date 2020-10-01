@@ -358,7 +358,7 @@ class ApiController extends Controller
             ->get();
         }
         $matches->transform(function($item,$key)use($request){
-                $request->merge(['match_id'=>$item->match_id]);  
+                  
                 
                 $contests = \DB::table('create_contests')
                     ->where('match_id',$item->match_id)
@@ -367,11 +367,12 @@ class ApiController extends Controller
                     ->get();
                     // get contest based on contest
                     $contests->transform(function($item,$key){
-                       
-                    $this->updateMatchRankByMatchId($item->match_id,$item->id); 
+                        $request->merge(['match_id'=>$item->match_id]); 
+                        $this->updateMatchRankByMatchId($item->match_id,$item->id); 
+                        $this->WinningPrizeDistribution($request);
                    
                 });
-                $this->WinningPrizeDistribution($request);
+
             });
 
       //  $this->WinningPrizeDistribution($request);

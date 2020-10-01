@@ -347,8 +347,7 @@ class ApiController extends Controller
     }
 
     public function updateUserMatchPoints(Request $request){
-        //$this->updatePointsByMatchID($request);
-        $this->WinningPrizeDistribution($request);
+        $this->getPlayerPoints($request);
 
         if($request->match_id){
             $matches = Matches::where('match_id',$request->match_id)
@@ -356,7 +355,6 @@ class ApiController extends Controller
                         ->get();
         }else{
             $matches = Matches::where('status',3)
-            ->whereDate('date_start',\Carbon\Carbon::today())
             ->get();
         }
         $matches->transform(function($item,$key)use($request){
@@ -370,11 +368,11 @@ class ApiController extends Controller
                     // get contest based on contest
                     $contests->transform(function($item,$key){
                        
-                    //$this->updateMatchRankByMatchId($item->match_id,$item->id); 
+                    $this->updateMatchRankByMatchId($item->match_id,$item->id); 
                 });
             });
 
-        //$this->WinningPrizeDistribution($request);
+        $this->WinningPrizeDistribution($request);
         return [
             'status'=>true,
             'code' => 200,
@@ -389,25 +387,30 @@ class ApiController extends Controller
         $username   =  env('DB_USERNAME','sportsfight');
         $password   =  env('DB_PASSWORD','sportsfight');
         $dbname     =  env('DB_DATABASE','sportsfight_prod');
+
         // Create connection
         $conn = mysqli_connect($servername, $username, $password, $dbname);
-        /*$sql = 'SELECT id,match_id,user_id,contest_id,created_team_id,ranks,points, FIND_IN_SET( points, (SELECT GROUP_CONCAT( points ORDER BY points DESC ) FROM join_contests  where match_id='.$match_id.' and contest_id='.$contest_id.')) AS ranks FROM join_contests where match_id='.$match_id.' and contest_id='.$contest_id.' ORDER BY ranks ASC';*/
-
+        
         $sql = "SELECT id, user_id, match_id, contest_id, points, (SELECT COUNT(*)+1 FROM join_contests B WHERE A.points<B.points and ( match_id=$match_id and contest_id=$contest_id)) AS Rank FROM join_contests A where match_id=$match_id and contest_id=$contest_id ORDER BY `Rank` DESC";
         
         $result = mysqli_query($conn, $sql);
-      /*  if ($result && mysqli_num_rows($result) > 0) {
-            while($row = mysqli_fetch_object($result)) {
-                if($row->points>0)
-                {           
-                    $jc = JoinContest::find($row->id);
-                    if($jc){
-                        $jc->ranks = $row->Rank;
-                        $jc->save();
+        if ($result && mysqli_num_rows($result) > 0) {
+                    while($row = $result->fetch_object()) {
+                        
+                        if($row->Rank > 0)
+                        {           
+                            
+                            \DB::table('join_contests')
+                               ->where('id', '=', $row->id)
+                               ->update(
+                                [
+                                    'ranks' => $row->Rank 
+                                ]
+                            );
+                        }
                     }
-                } 
-            }
-        }*/
+
+        }
         mysqli_close($conn);
 
         return ['match_id'=>$match_id];
@@ -826,12 +829,9 @@ class ApiController extends Controller
             }
             $request->merge(['match_id' =>  $match->match_id]);
 
-            if($td<0){
-                $this->updatePointsByMatchID($request);  
-                //$this->updateLivePoints($request);
-                //$this->updateRankByMatchId($request);  
-                $this->WinningPrizeDistribution($request);    
-            }
+           /* if($td<0){
+                $this->updateUserMatchPoints($request);   
+            }*/
             
             if(isset($points_json->response)){
                 $match_obj = Matches::firstOrNew(
@@ -3507,14 +3507,9 @@ class ApiController extends Controller
                             }
                             $data_set->save();
                         }
-
                     }
-
-
                 }
-
             }
-
         }
         $d['end_time'] = date('d-m-Y h:i:s A');
         $d['message'] ="Player information updated";

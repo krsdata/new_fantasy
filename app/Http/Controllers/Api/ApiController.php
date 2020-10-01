@@ -343,7 +343,7 @@ class ApiController extends Controller
             'message' => 'Prize Breakup',
             'response' => $data
         ];
-
+        
     }
 
     public function updateUserMatchPoints(Request $request){

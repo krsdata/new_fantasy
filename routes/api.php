@@ -25,9 +25,22 @@ header("Access-Control-Allow-Origin: *");
 
 
 Route::group([
-    'prefix' => 'v3'
+    'prefix' => 'v2'
 ], function()
 { 	
+
+	Route::namespace('App\Http\Controllers\Api')->group(function () {
+     
+     	Route::post('/login', 'UserController@login');
+	    Route::post('/register', 'UserController@member/registration');
+	    Route::get('/logout', 'UserController@logout')->middleware('auth:api');
+	    Route::match(['post','get'], 'email_verification', 'UserController@emailVerification');
+	    Route::match(['post','get'], 'forgotPassword', 'Api\UserController@forgotPassword');
+	    Route::match(['post','get'], 'password/reset', 'UserController@resetPassword');
+	    Route::match(['post','get'], 'changePassword', 'UserController@changePassword');
+	    Route::match(['post','get'], 'mChangePassword', 'UserController@mChangePassword');
+
+		});
 	
 	Route::namespace('App\Http\Controllers\Api')->group(function () {
 	    // Controllers Within The "App\Http\Controllers\Admin" Namespace    
@@ -247,7 +260,7 @@ Route::group([
 
 // if URL not found
 Route::group([
-    'prefix' => 'v3'
+    'prefix' => 'v2'
 ], function()
 {
     // if route not found

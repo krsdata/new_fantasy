@@ -343,7 +343,7 @@ class ApiController extends Controller
             'message' => 'Prize Breakup',
             'response' => $data
         ];
-        
+
     }
 
     public function updateUserMatchPoints(Request $request){
@@ -364,15 +364,16 @@ class ApiController extends Controller
                     ->where('match_id',$item->match_id)
                     ->where('is_cancelled',0)
                     ->where('filled_spot','>',0)
-                    ->get(); 
+                    ->get();
                     // get contest based on contest
                     $contests->transform(function($item,$key){
                        
                     $this->updateMatchRankByMatchId($item->match_id,$item->id); 
+                    $this->WinningPrizeDistribution($request);
                 });
             });
 
-        $this->WinningPrizeDistribution($request);
+      //  $this->WinningPrizeDistribution($request);
         return [
             'status'=>true,
             'code' => 200,

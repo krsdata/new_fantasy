@@ -347,15 +347,19 @@ class ApiController extends Controller
     }
 
     public function updateUserMatchPoints(Request $request){
-        $this->getPlayerPoints($request);
 
         if($request->match_id){
+            $this->getPlayerPoints($request);
+
             $matches = Matches::where('match_id',$request->match_id)
                        // ->whereDate('date_start',\Carbon\Carbon::today())
                         ->get();
         }else{
             $matches = Matches::where('status',3)
             ->get();
+        }
+        if($matches){
+            $this->getPlayerPoints($request);
         }
         $matches->transform(function($item,$key)use($request){
                 $request->merge(['match_id'=>$item->match_id]);   

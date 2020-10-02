@@ -376,7 +376,7 @@ class ApiController extends Controller
                        
                    
                 });
-             $this->WinningPrizeDistribution($request);        
+           //  $this->WinningPrizeDistribution($request);        
         });
 
       //  $this->WinningPrizeDistribution($request);
